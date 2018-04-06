@@ -1,11 +1,48 @@
 #ifndef METEOFRANCEMODEL_H
 #define METEOFRANCEMODEL_H
 
+#include <QObject>
+#include <QtCore>
+#include <QtNetwork>
 
-class MeteoFranceModel
+class MeteoFranceModel: public QObject
+{
+    Q_OBJECT
+
+public:
+    MeteoFranceModel(QNetworkAccessManager *networkManager, QWidget *parent,
+                     int lat_min, int lon_min, int lat_max, int lon_max);
+    ~MeteoFranceModel() { }
+    virtual void getEndpoint() = 0;     // Abstract method
+    void download();
+    QString getPartialFileName();
+    virtual QString getFileName() = 0; // Abstract method
+    bool saveToDisk(const QString &filename, QIODevice *data);
+
+public slots:
+    void slotFinished();
+
+protected:
+    QNetworkAccessManager *m_networkManager;
+    int m_lat_min;
+    int m_lat_max;
+    int m_lon_min;
+    int m_lon_max;
+    QString m_args;
+    QUrl m_api;
+    QNetworkReply *reply;
+    QWidget *m_parent;
+};
+
+
+class Arpege: public MeteoFranceModel
 {
 public:
-    MeteoFranceModel();
+    Arpege(QNetworkAccessManager *networkManager, QWidget *parent,
+           int lat_min, int lon_min, int lat_max, int lon_max);
+    ~Arpege();
+    void getEndpoint();
+    QString getFileName();
 };
 
 #endif // METEOFRANCEMODEL_H

@@ -1,26 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>DialogLoadGRIBMeteoFrance</class>
- <widget name="DialogLoadGRIBMeteoFrance" class="QDialog">
+ <widget class="QDialog" name="DialogLoadGRIBMeteoFrance">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>412</width>
+    <height>161</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget name="buttonBox" class="QDialogButtonBox">
+  <widget class="QDialogButtonBox" name="buttonCancelOK">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
+     <x>10</x>
+     <y>120</y>
+     <width>391</width>
      <height>32</height>
     </rect>
    </property>
@@ -31,12 +29,53 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>391</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Meteo France Weather Models</string>
+   </property>
+   <widget class="QRadioButton" name="radioArpege">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>261</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Arpege (0,1° / Validity 4 days)</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioArome">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>231</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Arome (0,025° / Validity 5 days)</string>
+    </property>
+   </widget>
+  </widget>
  </widget>
- <pixmapfunction/>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttonCancelOK</sender>
    <signal>accepted()</signal>
    <receiver>DialogLoadGRIBMeteoFrance</receiver>
    <slot>accept()</slot>
@@ -52,7 +91,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttonCancelOK</sender>
    <signal>rejected()</signal>
    <receiver>DialogLoadGRIBMeteoFrance</receiver>
    <slot>reject()</slot>
@@ -67,5 +106,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonCancelOK</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogLoadGRIBMeteoFrance</receiver>
+   <slot>slotBtOK()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>slotBtOK()</slot>
+ </slots>
 </ui>

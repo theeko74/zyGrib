@@ -245,6 +245,11 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Close, SIGNAL(triggered()), this, SLOT(slotFile_Close()));
     connect(mb->acFile_NewInstance, SIGNAL(triggered()), this, SLOT(slotGenericAction()));
     connect(mb->acFile_Load_GRIB, SIGNAL(triggered()), this, SLOT(slotFile_Load_GRIB()));
+
+    // CUSTOMIZATION
+    // Meteo France GRIB Downloader
+    connect(mb->acFile_Load_GRIB_MeteoFrance, SIGNAL(triggered()), this, SLOT(slotFile_Load_GRIB_MeteoFrance()));
+
     connect(mb->acFile_Load_IAC, SIGNAL(triggered()), this, SLOT(slotFile_Load_IAC()));
 
 	connect(mb->acMBlueSwiss_Load, SIGNAL(triggered()), this, SLOT(slotFile_MBLUE_Load()));
@@ -595,6 +600,7 @@ void MainWindow::createToolBar (bool withmblue)
     toolBar->addSeparator();
     toolBar->addAction(menuBar->ac_CreateAnimation);
     toolBar->addSeparator();
+    toolBar->addAction(menuBar->acFile_Load_GRIB_MeteoFrance);
 	
 }
 //-----------------------------------------------
@@ -1559,6 +1565,35 @@ void MainWindow::slotFile_Load_GRIB ()
             tr("Please select an area on the map."));
     }
 }
+
+// CUSTOMIZATION
+// Meteo France GRIB Downloader
+//---------------------------------------------
+void MainWindow::slotFile_Load_GRIB_MeteoFrance ()
+{
+    double x0, y0, x1, y1;
+    if ( terre->getSelectedRectangle (&x0,&y0, &x1,&y1)
+         || terre->getGribFileRectangle (&x0,&y0, &x1,&y1) )
+    {
+        // Load downloader window
+        QString fname = DialogLoadGRIBMeteoFrance::getFile(networkManager, this,
+                                                           x0, y0, x1, y1);
+
+        // Open GRIB file
+        /*
+        if (fname != "") {
+            openMeteoDataFile (fname);
+        }
+        */
+    }
+    else {
+        QMessageBox::warning (this,
+            tr("Download a GRIB file"),
+            tr("Please select an area on the map."));
+    }
+}
+
+
 
 //-----------------------------------------------
 void MainWindow::slotFile_GribServerStatus()
