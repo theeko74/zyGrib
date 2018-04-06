@@ -9,3 +9,4 @@ cscope.out
 .DS_Store
 zyGrib.app
 build-zyGrib*
+data/config
