@@ -106,11 +106,6 @@ Arpege::Arpege(QNetworkAccessManager *networkManager,
     getEndpoint();
 }
 
-Arpege::~Arpege()
-{
-
-}
-
 void Arpege::getEndpoint()
 {
     // API endpoint to donwload GRIB file
@@ -130,4 +125,37 @@ QString Arpege::getFileName()
 {
     QString fileName = getPartialFileName();
     return QString("Arpege") + fileName;
+}
+
+
+//----------------------------------------------------------------------------
+// AROME CLASS
+//---------------------------------------------------------------------------
+
+Arome::Arome(QNetworkAccessManager *networkManager,
+             int lat_min, int lon_min, int lat_max, int lon_max)
+: MeteoFranceModel(networkManager, lat_min, lon_min, lat_max, lon_max)
+{
+    getEndpoint();
+}
+
+void Arome::getEndpoint()
+{
+    // API endpoint to donwload GRIB file
+    // from the correct Meteo France model
+    // http://195.154.231.142/grib/arome?
+    //  x={long_min}&X={long_max}&y={lat_min}&Y={lat_max}&r={args}
+    m_api = QUrl(QString("http://195.154.231.142/grib/arome?x=%1&X=%2&y=%3&Y=%4&r=%5").arg(
+                     QString::number(m_lon_min), QString::number(m_lon_max),
+                     QString::number(m_lat_min), QString::number(m_lat_max),
+                     m_args)
+                 );
+
+    qDebug() << "Arome created";
+}
+
+QString Arome::getFileName()
+{
+    QString fileName = getPartialFileName();
+    return QString("Arome") + fileName;
 }

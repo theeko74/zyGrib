@@ -81,7 +81,11 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
     // Start downloading.
     if (ui->radioArome->isChecked())
     {
-        qDebug() << "Arome";
+        Arome *model = new Arome(m_networkManager,
+                                 m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        model->download();
+        connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
+        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
     }
     else
     {
@@ -89,8 +93,9 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
                                    m_lat_min, m_lon_min, m_lat_max, m_lon_max);
         model->download();
         connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
-        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));  
+        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
     }
+
 }
 
 void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)

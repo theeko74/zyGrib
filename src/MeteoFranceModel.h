@@ -45,7 +45,18 @@ class Arpege: public MeteoFranceModel
 public:
     Arpege(QNetworkAccessManager *networkManager,
            int lat_min, int lon_min, int lat_max, int lon_max);
-    ~Arpege();
+    ~Arpege() { }
+    void getEndpoint();
+    QString getFileName();
+};
+
+
+class Arome: public MeteoFranceModel
+{
+public:
+    Arome(QNetworkAccessManager *networkManager,
+           int lat_min, int lon_min, int lat_max, int lon_max);
+    ~Arome() { }
     void getEndpoint();
     QString getFileName();
 };

@@ -51,7 +51,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Arpege (0,1° / Validity 4 days)</string>
+     <string>Arpege (0,1° / Validity 5 days)</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -67,7 +67,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Arome (0,025° / Validity 5 days)</string>
+     <string>Arome (0,025° / Validity 2 days)</string>
     </property>
    </widget>
   </widget>
