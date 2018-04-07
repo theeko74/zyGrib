@@ -22,6 +22,7 @@ public:
 
 public slots:
     void slotFinished();
+    void slotAbortDownload();
 
 signals:
     void signalGribSaved(QString);
@@ -34,7 +35,8 @@ protected:
     int m_lon_max;
     QString m_args;
     QUrl m_api;
-    QNetworkReply *reply;
+    QNetworkReply *m_reply;
+    bool m_error;
 };
 
 

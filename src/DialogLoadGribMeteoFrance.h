@@ -33,7 +33,7 @@ private:
     int m_lon_min;
     int m_lon_max;
     QString m_fullPathFileName;
-
+    QCursor m_oldCursor;
 };
 
 #endif // DIALOGLOADGRIBMETEOFRANCE_H

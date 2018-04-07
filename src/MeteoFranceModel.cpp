@@ -16,6 +16,7 @@ MeteoFranceModel::MeteoFranceModel(QNetworkAccessManager *networkManager,
     m_lon_min = lon_min;
     m_lon_max = lon_max;
     m_args = QString("wgtprn");
+    m_error = false;
 }
 
 void MeteoFranceModel::download()
@@ -23,21 +24,9 @@ void MeteoFranceModel::download()
     QNetworkRequest request;
     request.setUrl(m_api);
     qDebug() << request.url();
-    reply = m_networkManager->get(request);
+    m_reply = m_networkManager->get(request);
 
-    connect(reply, SIGNAL(finished()), this, SLOT(slotFinished()));
-}
-
-void MeteoFranceModel::slotFinished()
-{
-    qDebug() << reply->rawHeaderList();
-    qDebug() << getFileName();
-    QString fileName = getFileName();
-    QString fullPathFileName = getFullPathFileName(fileName);
-    bool fileSaved = saveToDisk(fullPathFileName, reply);
-    qDebug() << "File saved?: " << fileSaved;
-    if (fileSaved)
-        emit signalGribSaved(fullPathFileName);
+    connect(m_reply, SIGNAL(finished()), this, SLOT(slotFinished()));
 }
 
 QString MeteoFranceModel::getPartialFileName()
@@ -81,6 +70,29 @@ bool MeteoFranceModel::saveToDisk(const QString &fullPath, QIODevice *data)
     return true;
 }
 
+// SLOTS
+
+void MeteoFranceModel::slotFinished()
+{
+    if (!m_error)
+    {
+        qDebug() << m_reply->rawHeaderList();
+        qDebug() << getFileName();
+
+        QString fileName = getFileName();
+        QString fullPathFileName = getFullPathFileName(fileName);
+        bool fileSaved = saveToDisk(fullPathFileName, m_reply);
+        qDebug() << "File saved?: " << fileSaved;
+        if (fileSaved)
+            emit signalGribSaved(fullPathFileName);
+    }
+}
+
+void MeteoFranceModel::slotAbortDownload()
+{
+    m_error = true;
+    m_reply->abort();
+}
 
 
 //----------------------------------------------------------------------------

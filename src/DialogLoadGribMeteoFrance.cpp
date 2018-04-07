@@ -31,11 +31,18 @@ DialogLoadGRIBMeteoFrance::DialogLoadGRIBMeteoFrance(QNetworkAccessManager *netw
 {
     ui->setupUi(this);
     m_networkManager = networkManager;
+
+    // Init progress bar
+    ui->progressBar->setValue(0);
+
+    // Save old cursor before we change it
+    m_oldCursor = cursor();
 }
 
 DialogLoadGRIBMeteoFrance::~DialogLoadGRIBMeteoFrance()
 {
     delete ui;
+    delete m_networkManager;
 }
 
 void DialogLoadGRIBMeteoFrance::setZone(double lon_min, double lat_min,
@@ -56,7 +63,22 @@ void DialogLoadGRIBMeteoFrance::setZone(double lon_min, double lat_min,
 void DialogLoadGRIBMeteoFrance::slotBtOK()
 {
     // Slot to be run when button 'OK'
-    // is clicked by the user. Start downloading.
+    // is clicked by the user.
+
+    // Start the loading bar
+    // When setMinimum and setMaximum are set to 0 both, then QProgressBar only
+    // displays a busy indicator as MeteoFrance GRIB server does not send the
+    // content-length header...
+    ui->progressBar->setMinimum(0);
+    ui->progressBar->setMaximum(0);
+
+    // Display downloading status
+    ui->downloadingInfo->setText("Meteo France's servers are very slow. Please be patient while downloading...");
+
+    // Change cursor to waiting cursor
+    setCursor(Qt::WaitCursor);
+
+    // Start downloading.
     if (ui->radioArome->isChecked())
     {
         qDebug() << "Arome";
@@ -66,13 +88,15 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
         Arpege *model = new Arpege(m_networkManager,
                                    m_lat_min, m_lon_min, m_lat_max, m_lon_max);
         model->download();
-        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
+        connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
+        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));  
     }
 }
 
 void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)
 {
     m_fullPathFileName = fullPathFileName;
+    setCursor(m_oldCursor);
     accept();
 }
 
