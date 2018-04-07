@@ -87,6 +87,11 @@ public:
 	QAction *acFile_NewInstance;
     QAction *acFile_Load_GRIB;
     QAction *acFile_Load_IAC;
+
+    // CUSTOMIZATION
+    // Add Meteo France GRIB downloader
+    //---------------------------------------------------
+    QAction *acFile_Load_GRIB_MeteoFrance;
     
 	QAction *acMBlue_fastInterpolation;
 	QAction *acMBlueSwiss_Load;
