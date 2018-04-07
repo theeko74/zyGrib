@@ -83,7 +83,8 @@ MenuBar::MenuBar (QWidget *parent, bool withmblue)
         // Add Meteo France GRIB downloader
         acFile_Load_GRIB_MeteoFrance = addAction (menuFile,
                     tr("Download GRIB from Meteo France"), tr("Ctrl+Shift+D"),
-                    tr("Download"), Util::pathImg("network.png"));
+                    tr("Download"), Util::pathImg("meteofrance.png"));
+        menuFile->addSeparator();
         acFile_GribServerStatus = addAction (menuFile,
         			tr("GRIB server status"), tr("Ctrl+R"),
                     tr("GRIB file server status"), Util::pathImg("connect_no.png"));

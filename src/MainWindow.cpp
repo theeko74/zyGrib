@@ -593,15 +593,14 @@ void MainWindow::createToolBar (bool withmblue)
     toolBar->addAction(menuBar->acMap_Go_Down);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->acFile_Load_GRIB);
+    toolBar->addAction(menuBar->acFile_Load_GRIB_MeteoFrance);
 	if (withmblue)
 		toolBar->addAction(menuBar->acMBlueSwiss_Load);
     toolBar->addAction(menuBar->acFile_GribServerStatus);
     toolBar->addAction(menuBar->acFile_Info_GRIB);
     toolBar->addSeparator();
     toolBar->addAction(menuBar->ac_CreateAnimation);
-    toolBar->addSeparator();
-    toolBar->addAction(menuBar->acFile_Load_GRIB_MeteoFrance);
-	
+    toolBar->addSeparator();	
 }
 //-----------------------------------------------
 void MainWindow::moveEvent (QMoveEvent *)
