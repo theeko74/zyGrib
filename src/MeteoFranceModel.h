@@ -10,17 +10,21 @@ class MeteoFranceModel: public QObject
     Q_OBJECT
 
 public:
-    MeteoFranceModel(QNetworkAccessManager *networkManager, QWidget *parent,
+    MeteoFranceModel(QNetworkAccessManager *networkManager,
                      int lat_min, int lon_min, int lat_max, int lon_max);
     ~MeteoFranceModel() { }
     virtual void getEndpoint() = 0;     // Abstract method
     void download();
     QString getPartialFileName();
     virtual QString getFileName() = 0; // Abstract method
-    bool saveToDisk(const QString &filename, QIODevice *data);
+    QString getFullPathFileName(const QString &filename);
+    bool saveToDisk(const QString &fullPath, QIODevice *data);
 
 public slots:
     void slotFinished();
+
+signals:
+    void signalGribSaved(QString);
 
 protected:
     QNetworkAccessManager *m_networkManager;
@@ -31,14 +35,13 @@ protected:
     QString m_args;
     QUrl m_api;
     QNetworkReply *reply;
-    QWidget *m_parent;
 };
 
 
 class Arpege: public MeteoFranceModel
 {
 public:
-    Arpege(QNetworkAccessManager *networkManager, QWidget *parent,
+    Arpege(QNetworkAccessManager *networkManager,
            int lat_min, int lon_min, int lat_max, int lon_max);
     ~Arpege();
     void getEndpoint();

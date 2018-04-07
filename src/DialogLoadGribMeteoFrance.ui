@@ -76,22 +76,6 @@
  <connections>
   <connection>
    <sender>buttonCancelOK</sender>
-   <signal>accepted()</signal>
-   <receiver>DialogLoadGRIBMeteoFrance</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonCancelOK</sender>
    <signal>rejected()</signal>
    <receiver>DialogLoadGRIBMeteoFrance</receiver>
    <slot>reject()</slot>

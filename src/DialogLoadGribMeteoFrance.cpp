@@ -3,9 +3,6 @@
 
 #include <QDebug>
 
-#include "MeteoFranceModel.h"
-
-
 DialogLoadGRIBMeteoFrance *globalDiag = NULL;
 
 //-------------------------------------------------------------------------------
@@ -21,6 +18,7 @@ QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager
         globalDiag = new DialogLoadGRIBMeteoFrance(networkManager, parent);
     globalDiag->setZone(x0, y0, x1, y1);
     globalDiag->exec();
+    return globalDiag->m_fullPathFileName;
 
     return QString("temp");
 }
@@ -65,10 +63,16 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
     }
     else
     {
-        Arpege *model = new Arpege(m_networkManager, this,
+        Arpege *model = new Arpege(m_networkManager,
                                    m_lat_min, m_lon_min, m_lat_max, m_lon_max);
         model->download();
+        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
     }
+}
 
+void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)
+{
+    m_fullPathFileName = fullPathFileName;
+    accept();
 }
 

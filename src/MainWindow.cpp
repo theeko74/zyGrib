@@ -1580,11 +1580,9 @@ void MainWindow::slotFile_Load_GRIB_MeteoFrance ()
                                                            x0, y0, x1, y1);
 
         // Open GRIB file
-        /*
         if (fname != "") {
             openMeteoDataFile (fname);
         }
-        */
     }
     else {
         QMessageBox::warning (this,

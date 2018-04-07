@@ -7,7 +7,7 @@
 // METEO FRANCE ABSTRACT CLASS
 //---------------------------------------------------------------------------
 
-MeteoFranceModel::MeteoFranceModel(QNetworkAccessManager *networkManager, QWidget *parent,
+MeteoFranceModel::MeteoFranceModel(QNetworkAccessManager *networkManager,
                                    int lat_min, int lon_min, int lat_max, int lon_max)
 {
     m_networkManager = networkManager;
@@ -16,7 +16,6 @@ MeteoFranceModel::MeteoFranceModel(QNetworkAccessManager *networkManager, QWidge
     m_lon_min = lon_min;
     m_lon_max = lon_max;
     m_args = QString("wgtprn");
-    m_parent = parent;
 }
 
 void MeteoFranceModel::download()
@@ -33,8 +32,12 @@ void MeteoFranceModel::slotFinished()
 {
     qDebug() << reply->rawHeaderList();
     qDebug() << getFileName();
-    bool fileSaved = saveToDisk(getFileName(), reply);
+    QString fileName = getFileName();
+    QString fullPathFileName = getFullPathFileName(fileName);
+    bool fileSaved = saveToDisk(fullPathFileName, reply);
     qDebug() << "File saved?: " << fileSaved;
+    if (fileSaved)
+        emit signalGribSaved(fullPathFileName);
 }
 
 QString MeteoFranceModel::getPartialFileName()
@@ -49,7 +52,7 @@ QString MeteoFranceModel::getPartialFileName()
     return fileName;
 }
 
-bool MeteoFranceModel::saveToDisk(const QString &filename, QIODevice *data)
+QString MeteoFranceModel::getFullPathFileName(const QString &filename)
 {
     // Get user preferences for the folder
     // used to save the GRIB files
@@ -63,7 +66,11 @@ bool MeteoFranceModel::saveToDisk(const QString &filename, QIODevice *data)
     // the folder to save the GRIB file
     QString fullPath = Util::getSaveFileName(NULL, tr("Save GRIB File"), path+filename);
     qDebug() << fullPath;
+    return fullPath;
+}
 
+bool MeteoFranceModel::saveToDisk(const QString &fullPath, QIODevice *data)
+{
     QFile file(fullPath);
     if (!file.open(QIODevice::WriteOnly)) {
         // Display an error message because the file can't be opened
@@ -80,9 +87,9 @@ bool MeteoFranceModel::saveToDisk(const QString &filename, QIODevice *data)
 // ARPEGE CLASS
 //---------------------------------------------------------------------------
 
-Arpege::Arpege(QNetworkAccessManager *networkManager, QWidget *parent,
+Arpege::Arpege(QNetworkAccessManager *networkManager,
                int lat_min, int lon_min, int lat_max, int lon_max)
-: MeteoFranceModel(networkManager, parent, lat_min, lon_min, lat_max, lon_max)
+: MeteoFranceModel(networkManager, lat_min, lon_min, lat_max, lon_max)
 {
     getEndpoint();
 }
