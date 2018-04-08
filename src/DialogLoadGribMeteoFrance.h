@@ -3,8 +3,10 @@
 
 #include <QDialog>
 #include <QNetworkAccessManager>
+#include <QMessageBox>
 
 #include "MeteoFranceModel.h"
+
 
 namespace Ui {
 class DialogLoadGRIBMeteoFrance;
@@ -24,6 +26,9 @@ public:
 public slots:
     void slotBtOK();
     void slotGribSaved(QString);
+    void slotFullPathAbort();
+    void slotErrorSaveToDisk(QString);
+    void slotNetworkError(QString);
 
 private:
     Ui::DialogLoadGRIBMeteoFrance *ui;
@@ -33,6 +38,7 @@ private:
     int m_lon_min;
     int m_lon_max;
     QString m_fullPathFileName;
+    QCursor m_waitCursor;
     QCursor m_oldCursor;
 };
 

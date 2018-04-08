@@ -25,6 +25,7 @@ void MeteoFranceModel::download()
     m_reply = m_networkManager->get(request);
 
     connect(m_reply, SIGNAL(finished()), this, SLOT(slotFinished()));
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotNetworkError(QNetworkReply::NetworkError)));
 }
 
 QString MeteoFranceModel::getPartialFileName()
@@ -53,6 +54,8 @@ QString MeteoFranceModel::getFullPathFileName(const QString &filename)
     // Open a dialog window to select
     // the folder to save the GRIB file
     QString fullPath = Util::getSaveFileName(NULL, tr("Save GRIB File"), path+filename);
+    if (fullPath.isEmpty())
+        emit signalFullPathAbort();
     return fullPath;
 }
 
@@ -61,6 +64,7 @@ bool MeteoFranceModel::saveToDisk(const QString &fullPath, QIODevice *data)
     QFile file(fullPath);
     if (!file.open(QIODevice::WriteOnly)) {
         // Display an error message because the file can't be opened
+        emit signalErrorSaveToDisk("GRIB file cannot be saved on the disk");
         return false;
     }
     file.write(data->readAll());
@@ -79,6 +83,7 @@ void MeteoFranceModel::slotFinished()
         bool fileSaved = saveToDisk(fullPathFileName, m_reply);
         if (fileSaved)
             emit signalGribSaved(fullPathFileName);
+
     }
 }
 
@@ -86,6 +91,12 @@ void MeteoFranceModel::slotAbortDownload()
 {
     m_error = true;
     m_reply->abort();
+}
+
+void MeteoFranceModel::slotNetworkError(QNetworkReply::NetworkError)
+{
+    m_error = true;
+    emit signalErrorNetwork(m_reply->errorString());
 }
 
 

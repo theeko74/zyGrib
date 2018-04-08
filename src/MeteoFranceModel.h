@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
+
 class MeteoFranceModel: public QObject
 {
     Q_OBJECT
@@ -23,9 +24,13 @@ public:
 public slots:
     void slotFinished();
     void slotAbortDownload();
+    void slotNetworkError(QNetworkReply::NetworkError);
 
 signals:
     void signalGribSaved(QString);
+    void signalErrorSaveToDisk(QString);
+    void signalErrorNetwork(QString);
+    void signalFullPathAbort();
 
 protected:
     QNetworkAccessManager *m_networkManager;
