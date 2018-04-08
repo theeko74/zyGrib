@@ -32,10 +32,11 @@ QString MeteoFranceModel::getPartialFileName()
     // Return a partial file name for the GRIB
     // file that will need to add first the name
     // of the model used (Arpege or Arome)
-    QString fileName("_%1-%2-%3-%4_%5.grb");
+    QString fileName("_%1-%2-%3-%4_%5-%6.grb");
     fileName = fileName.arg(QString::number(m_lat_min), QString::number(m_lat_max),
                             QString::number(m_lon_min), QString::number(m_lon_max),
-                            QDate::currentDate().toString("dd-MM-yyyy"));
+                            QDate::currentDate().toString("dd-MM-yyyy"),
+                            QTime::currentTime().toString("HHmm"));
     return fileName;
 }
 
