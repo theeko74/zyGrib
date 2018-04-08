@@ -1,7 +1,6 @@
 #include "DialogLoadGribMeteoFrance.h"
 #include "ui_dialogloadgribmeteofrance.h"
 
-#include <QDebug>
 
 DialogLoadGRIBMeteoFrance *globalDiag = NULL;
 
@@ -19,8 +18,6 @@ QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager
     globalDiag->setZone(x0, y0, x1, y1);
     globalDiag->exec();
     return globalDiag->m_fullPathFileName;
-
-    return QString("temp");
 }
 
 

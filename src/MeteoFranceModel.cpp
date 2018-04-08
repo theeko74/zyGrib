@@ -1,6 +1,5 @@
-#include <QDebug>
-#include "MeteoFranceModel.h"
 #include "Util.h"
+#include "MeteoFranceModel.h"
 
 
 //----------------------------------------------------------------------------
@@ -23,7 +22,6 @@ void MeteoFranceModel::download()
 {
     QNetworkRequest request;
     request.setUrl(m_api);
-    qDebug() << request.url();
     m_reply = m_networkManager->get(request);
 
     connect(m_reply, SIGNAL(finished()), this, SLOT(slotFinished()));
@@ -54,7 +52,6 @@ QString MeteoFranceModel::getFullPathFileName(const QString &filename)
     // Open a dialog window to select
     // the folder to save the GRIB file
     QString fullPath = Util::getSaveFileName(NULL, tr("Save GRIB File"), path+filename);
-    qDebug() << fullPath;
     return fullPath;
 }
 
@@ -76,13 +73,9 @@ void MeteoFranceModel::slotFinished()
 {
     if (!m_error)
     {
-        qDebug() << m_reply->rawHeaderList();
-        qDebug() << getFileName();
-
         QString fileName = getFileName();
         QString fullPathFileName = getFullPathFileName(fileName);
         bool fileSaved = saveToDisk(fullPathFileName, m_reply);
-        qDebug() << "File saved?: " << fileSaved;
         if (fileSaved)
             emit signalGribSaved(fullPathFileName);
     }
@@ -117,8 +110,6 @@ void Arpege::getEndpoint()
                      QString::number(m_lat_min), QString::number(m_lat_max),
                      m_args)
                  );
-
-    qDebug() << "Arpege created";
 }
 
 QString Arpege::getFileName()
@@ -150,8 +141,6 @@ void Arome::getEndpoint()
                      QString::number(m_lat_min), QString::number(m_lat_max),
                      m_args)
                  );
-
-    qDebug() << "Arome created";
 }
 
 QString Arome::getFileName()
