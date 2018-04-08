@@ -14,8 +14,9 @@ MeteoFranceModel::MeteoFranceModel(QNetworkAccessManager *networkManager,
     m_lat_max = lat_max;
     m_lon_min = lon_min;
     m_lon_max = lon_max;
-    m_args = QString("wgtprn");
+    m_args = QString("cwgtprn");
     m_error = false;
+    m_abort = false;
 }
 
 void MeteoFranceModel::download()
@@ -76,7 +77,7 @@ bool MeteoFranceModel::saveToDisk(const QString &fullPath, QIODevice *data)
 
 void MeteoFranceModel::slotFinished()
 {
-    if (!m_error)
+    if (!m_error && !m_abort)
     {
         QString fileName = getFileName();
         QString fullPathFileName = getFullPathFileName(fileName);
@@ -89,14 +90,17 @@ void MeteoFranceModel::slotFinished()
 
 void MeteoFranceModel::slotAbortDownload()
 {
-    m_error = true;
+    m_abort = true;
     m_reply->abort();
 }
 
 void MeteoFranceModel::slotNetworkError(QNetworkReply::NetworkError)
 {
-    m_error = true;
-    emit signalErrorNetwork(m_reply->errorString());
+    if (!m_abort)
+    {
+        m_error = true;
+        emit signalErrorNetwork(m_reply->errorString());
+    }
 }
 
 

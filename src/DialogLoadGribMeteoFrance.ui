@@ -13,7 +13,10 @@
   <property name="windowTitle">
    <string>Meteo France GRIB Downloader</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonCancelOK">
+  <widget class="QDialogButtonBox" name="buttonBoxOK">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -26,7 +29,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Ok</set>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
@@ -102,27 +105,24 @@
     <string>Not connected.</string>
    </property>
   </widget>
+  <widget class="QDialogButtonBox" name="buttonBoxCancel">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>150</y>
+     <width>172</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel</set>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonCancelOK</sender>
-   <signal>rejected()</signal>
-   <receiver>DialogLoadGRIBMeteoFrance</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>181</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>191</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonCancelOK</sender>
+   <sender>buttonBoxOK</sender>
    <signal>accepted()</signal>
    <receiver>DialogLoadGRIBMeteoFrance</receiver>
    <slot>slotBtOK()</slot>
@@ -134,6 +134,22 @@
     <hint type="destinationlabel">
      <x>205</x>
      <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBoxCancel</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogLoadGRIBMeteoFrance</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>246</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>242</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>

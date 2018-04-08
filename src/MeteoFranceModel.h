@@ -42,6 +42,7 @@ protected:
     QUrl m_api;
     QNetworkReply *m_reply;
     bool m_error;
+    bool m_abort;
 };
 
 

@@ -2,8 +2,6 @@
 #include "ui_dialogloadgribmeteofrance.h"
 
 
-DialogLoadGRIBMeteoFrance *globalDiag = NULL;
-
 //-------------------------------------------------------------------------------
 QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager,
                                            QWidget *parent, double x0, double y0,
@@ -13,8 +11,7 @@ QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager
      * with downloading options for the Meteo France GRIB,
      * and return the filename of the GRIB file.
      */
-    if (!globalDiag)
-        globalDiag = new DialogLoadGRIBMeteoFrance(networkManager, parent);
+    DialogLoadGRIBMeteoFrance *globalDiag = new DialogLoadGRIBMeteoFrance(networkManager, parent);
     globalDiag->setZone(x0, y0, x1, y1);
     globalDiag->exec();
     return globalDiag->m_fullPathFileName;
@@ -76,15 +73,24 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
     // Change cursor to waiting cursor
     setCursor(m_waitCursor);
 
+    // Disable OK button while downloading
+    ui->buttonBoxOK->setEnabled(false);
+
     // Start downloading
     // By default it is the arpege model already selected
-    Arpege *model = new Arpege(m_networkManager,
-                               m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+    MeteoFranceModel *model = NULL;
 
     if (ui->radioArome->isChecked())
     {
-        Arome *model = new Arome(m_networkManager,
-                                 m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        Arome *modelArome = new Arome(m_networkManager,
+                                      m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        model = modelArome;
+    }
+    else
+    {
+        Arpege *modelArpege = new Arpege(m_networkManager,
+                                         m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        model = modelArpege;
     }
 
     model->download();
@@ -107,15 +113,18 @@ void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)
 void DialogLoadGRIBMeteoFrance::slotFullPathAbort()
 {
     setCursor(m_oldCursor);
+    ui->buttonBoxOK->setEnabled(true);
 }
 
 void DialogLoadGRIBMeteoFrance::slotErrorSaveToDisk(QString msg)
 {
     QMessageBox::critical(this, "GRIB error", msg);
+    // Error dialog is displayed also when cancel button is clicked
 }
 
 void DialogLoadGRIBMeteoFrance::slotNetworkError(QString msg)
 {
     QMessageBox::critical(this, "Network Error", msg);
+    // Error dialog is displayed also when cancel button is clicked
 }
 
