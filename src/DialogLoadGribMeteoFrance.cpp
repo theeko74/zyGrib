@@ -2,8 +2,6 @@
 #include "ui_dialogloadgribmeteofrance.h"
 
 
-DialogLoadGRIBMeteoFrance *globalDiag = NULL;
-
 //-------------------------------------------------------------------------------
 QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager,
                                            QWidget *parent, double x0, double y0,
@@ -13,8 +11,7 @@ QString DialogLoadGRIBMeteoFrance::getFile(QNetworkAccessManager *networkManager
      * with downloading options for the Meteo France GRIB,
      * and return the filename of the GRIB file.
      */
-    if (!globalDiag)
-        globalDiag = new DialogLoadGRIBMeteoFrance(networkManager, parent);
+    DialogLoadGRIBMeteoFrance *globalDiag = new DialogLoadGRIBMeteoFrance(networkManager, parent);
     globalDiag->setZone(x0, y0, x1, y1);
     globalDiag->exec();
     return globalDiag->m_fullPathFileName;
@@ -34,6 +31,7 @@ DialogLoadGRIBMeteoFrance::DialogLoadGRIBMeteoFrance(QNetworkAccessManager *netw
 
     // Save old cursor before we change it
     m_oldCursor = cursor();
+    m_waitCursor = Qt::WaitCursor;
 }
 
 DialogLoadGRIBMeteoFrance::~DialogLoadGRIBMeteoFrance()
@@ -73,26 +71,36 @@ void DialogLoadGRIBMeteoFrance::slotBtOK()
     ui->downloadingInfo->setText("Meteo France's servers are very slow. Please be patient while downloading...");
 
     // Change cursor to waiting cursor
-    setCursor(Qt::WaitCursor);
+    setCursor(m_waitCursor);
 
-    // Start downloading.
+    // Disable OK button while downloading
+    ui->buttonBoxOK->setEnabled(false);
+
+    // Start downloading
+    // By default it is the arpege model already selected
+    MeteoFranceModel *model = NULL;
+
     if (ui->radioArome->isChecked())
     {
-        Arome *model = new Arome(m_networkManager,
-                                 m_lat_min, m_lon_min, m_lat_max, m_lon_max);
-        model->download();
-        connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
-        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
+        Arome *modelArome = new Arome(m_networkManager,
+                                      m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        model = modelArome;
     }
     else
     {
-        Arpege *model = new Arpege(m_networkManager,
-                                   m_lat_min, m_lon_min, m_lat_max, m_lon_max);
-        model->download();
-        connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
-        connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
+        Arpege *modelArpege = new Arpege(m_networkManager,
+                                         m_lat_min, m_lon_min, m_lat_max, m_lon_max);
+        model = modelArpege;
     }
 
+    model->download();
+
+    // Connections
+    connect(this, SIGNAL(rejected()), model, SLOT(slotAbortDownload()));
+    connect(model, SIGNAL(signalFullPathAbort()), this, SLOT(slotFullPathAbort()));
+    connect(model, SIGNAL(signalErrorSaveToDisk(QString)), this, SLOT(slotErrorSaveToDisk(QString)));
+    connect(model, SIGNAL(signalErrorNetwork(QString)), this, SLOT(slotNetworkError(QString)));
+    connect(model, SIGNAL(signalGribSaved(QString)), this, SLOT(slotGribSaved(QString)));
 }
 
 void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)
@@ -100,5 +108,23 @@ void DialogLoadGRIBMeteoFrance::slotGribSaved(QString fullPathFileName)
     m_fullPathFileName = fullPathFileName;
     setCursor(m_oldCursor);
     accept();
+}
+
+void DialogLoadGRIBMeteoFrance::slotFullPathAbort()
+{
+    setCursor(m_oldCursor);
+    ui->buttonBoxOK->setEnabled(true);
+}
+
+void DialogLoadGRIBMeteoFrance::slotErrorSaveToDisk(QString msg)
+{
+    QMessageBox::critical(this, "GRIB error", msg);
+    // Error dialog is displayed also when cancel button is clicked
+}
+
+void DialogLoadGRIBMeteoFrance::slotNetworkError(QString msg)
+{
+    QMessageBox::critical(this, "Network Error", msg);
+    // Error dialog is displayed also when cancel button is clicked
 }
 
